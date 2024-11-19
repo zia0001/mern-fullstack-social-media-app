@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-                                              //first object
+
+// Schema definition
 const UserSchema = new mongoose.Schema(
   {
     firstName: {
@@ -31,15 +32,16 @@ const UserSchema = new mongoose.Schema(
     },
     friends: {
       type: Array,
-      default: []
+      default: [],
     },
     location: String,
     occupation: String,
     viewedProfile: Number,
     impressions: Number,
   },
-   {timestamps: true}
-  );           //for automatic dates i.e when its created or updated etc
+  { timestamps: true } // Automatically manage createdAt and updatedAt
+);
 
   const User = mongoose.model("user", UserSchema);
+
   export default User;
