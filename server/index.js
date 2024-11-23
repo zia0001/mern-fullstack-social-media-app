@@ -9,6 +9,7 @@ import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import { register } from "./controllers/auth.js"; // Add semicolon
+import { verifyToken } from "./middleware/auth.js";
 
 /* PACKAGES CONFIGURATIONS */
 
@@ -39,7 +40,10 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
-app.post("/auth/register", upload.single("picture"), register); // Use the cleaner route without the trailing "/"
+app.post("/auth/register", upload.single("picture"), verifyToken, register);
+
+/* Routes */
+app.use("/auth/", authRoutes);
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
