@@ -46,7 +46,8 @@ app.post("/auth/register", upload.single("picture"), verifyToken, register);
 
 /* Routes */
 app.use("/auth/", authRoutes);
-app.use("users", userRoutes);
+app.use("/users", userRoutes);
+app.use("/posts", postRoutes);
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;
