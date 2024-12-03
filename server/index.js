@@ -8,9 +8,10 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-import authRoutes from "./routes/auth.js";
+// import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
-import { register } from "./controllers/auth.js"; // Add semicolon
+// import postRoutes from "./routes/posts.js";
+import { register, login } from "./controllers/auth.js"; // Add semicolon
 import { verifyToken } from "./middleware/auth.js";
 
 /* PACKAGES CONFIGURATIONS */
@@ -42,12 +43,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
-app.post("/auth/register", upload.single("picture"), verifyToken, register);
+app.post("/auth/register", upload.single("picture"), register);
+app.post("/auth/login", login);
+
+app.post("/posts", verifyToken, upload.single("picture"),)
 
 /* Routes */
-app.use("/auth/", authRoutes);
+// app.use("/auth/", authRoutes);
 app.use("/users", userRoutes);
-app.use("/posts", postRoutes);
+// app.get('/users/, controller)
+// app.get('/users/:id, controller)
+// app.use("/posts", postRoutes);
+
+app.use('*', function (req, res) {
+  res.status(404).send('Not found');
+});
 
 /* MONGOOSE SETUP */
 const PORT = process.env.PORT || 6001;

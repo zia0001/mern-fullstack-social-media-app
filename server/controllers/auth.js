@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";   // for password encryption 
 import jwt from "jsonwebtoken";
-import User from "../models/user.js";
+import User from "../models/User.js";
 
 /* Register USER */
 export const register = async (req, res) => {
   try {
     const {
       firstName,
-      LastName,
+      lastName,
       email,
       password,
       picturePath,
@@ -20,7 +20,7 @@ export const register = async (req, res) => {
 
     const newUser = new User({
       firstName,
-      LastName,
+      lastName,
       email,
       password: passwordHash,
       picturePath,
