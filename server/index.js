@@ -49,6 +49,7 @@ app.post("/auth/login", login);
 app.post("/posts", verifyToken, upload.single("picture"),)
 
 /* Routes */
+
 // app.use("/auth/", authRoutes);
 app.use("/users", userRoutes);
 // app.get('/users/, controller)
