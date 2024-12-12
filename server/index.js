@@ -8,11 +8,15 @@ import helmet from "helmet";
 import morgan from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
-// import authRoutes from "./routes/auth.js";
+import authRoutes from "./routes/auth.js";
 import userRoutes from "./routes/users.js";
-// import postRoutes from "./routes/posts.js";
+import postRoutes from "./routes/posts.js";
 import { register, login } from "./controllers/auth.js"; // Add semicolon
+import { createPost } from "./controllers/posts.js";
 import { verifyToken } from "./middleware/auth.js";
+import User from "./models/User.js";
+import Post from "./models/post.js";
+import { users, posts } from "./data/index.js";
 
 /* PACKAGES CONFIGURATIONS */
 
@@ -44,17 +48,15 @@ const upload = multer({ storage });
 
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);
+app.post("/post", verifyToken, upload.single("picture"), createPost);
 app.post("/auth/login", login);
 
-app.post("/posts", verifyToken, upload.single("picture"),)
 
 /* Routes */
 
-// app.use("/auth/", authRoutes);
+app.use("/auth/", authRoutes);
 app.use("/users", userRoutes);
-// app.get('/users/, controller)
-// app.get('/users/:id, controller)
-// app.use("/posts", postRoutes);
+app.use("/posts", postRoutes);
 
 app.use('*', function (req, res) {
   res.status(404).send('Not found');
@@ -66,5 +68,9 @@ mongoose
   .connect(process.env.MONGO_URL)
   .then(() => {
     app.listen(PORT, () => console.log(`Server Port: ${PORT}`));
+
+    /* ADD DATA ONE TIME*/
+    //User.insertMany(users);    // commented this running this again will duplicate the data but we need data one time
+    //Post.insertMany(posts);
   })
   .catch((error) => console.log(`${error} did not connect`));
