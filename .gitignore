@@ -1,0 +1,7 @@
+
+# Node modules directory
+server/node_modules/
+
+#Environment variable file
+*.env
+.vscode/
