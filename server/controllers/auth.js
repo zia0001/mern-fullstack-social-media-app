@@ -70,7 +70,7 @@ export const login = async (req, res) => {
 
     // Validate email
     if (!email || !isValidEmail(email)) {
-      return res.status(400).json({ msg: "Invalid or missing email address." });
+      return res.status(400).json({ msg: "Invalid email address or password." });
     }
 
     // Find the user by email
