@@ -16,19 +16,20 @@ import {
 } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import { PersistGate } from 'redux-persist/integration/react';
+import { configureStore } from '@reduxjs/toolkit'; // Import configureStore
 
 const persistConfig = { key: "root", storage, version: 1 };
 const persistedReducer = persistReducer(persistConfig, authReducer);
-const store = configStore({
+
+const store = configureStore({ // Fix: Use configureStore
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: { FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER }
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
     }),
 });
-
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -40,5 +41,3 @@ root.render(
     </Provider>
   </React.StrictMode>
 );
-
-
