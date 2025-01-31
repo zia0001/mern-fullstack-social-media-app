@@ -97,6 +97,7 @@ const Form = () => {
       setPageType("login");
     }
   };
+
   const login = async (values, onSubmitProps) => {
     const loggedInResponse = await fetch("http://localhost:3001/auth/login", {
       method: "POST",
