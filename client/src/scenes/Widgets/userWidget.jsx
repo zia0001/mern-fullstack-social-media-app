@@ -1,3 +1,6 @@
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
   ManageAccountsOutlined,
   EditOutlined,
@@ -7,12 +10,9 @@ import {
 import { Box, Typography, Divider, useTheme } from "@mui/material";
 import UserImage from "components/userImage";
 import FlexBetween from "components/FlexBetween";
-import WidgetWrapper from "components/WidgetWrapper";
-import { useSelector } from "react-redux";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import WidgetWrapper from "components/widgetwrapper";
 
-const UserWidget = ({ userId, picturePath }) => {
+const UserWidget = ({ userId }) => {
   const [user, setUser] = useState(null);
   const { palette } = useTheme();
   const navigate = useNavigate();
@@ -22,12 +22,17 @@ const UserWidget = ({ userId, picturePath }) => {
   const main = palette.neutral.main;
 
   const getUser = async () => {
-    const response = await fetch(`http://localhost:3001/users/${userId}`, {
-      method: "GET",
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await response.json();
-    setUser(data);
+    try {
+      const response = await fetch(`http://localhost:3001/users/${userId}`, {
+        method: "GET",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      // Ensure friends is always an array, even if the data is missing or malformed
+      setUser({ ...data, friends: Array.isArray(data.friends) ? data.friends : [] });
+    } catch (error) {
+      console.error("Failed to fetch user data:", error);
+    }
   };
 
   useEffect(() => {
@@ -46,6 +51,7 @@ const UserWidget = ({ userId, picturePath }) => {
     viewedProfile,
     impressions,
     friends,
+    picturepath
   } = user;
 
   return (
@@ -56,8 +62,10 @@ const UserWidget = ({ userId, picturePath }) => {
         pb="1.1rem"
         onClick={() => navigate(`/profile/${userId}`)}
       >
+
         <FlexBetween gap="1rem">
-          <UserImage image={picturePath} />
+
+          <UserImage image={picturepath} />
           <Box>
             <Typography
               variant="h4"
