@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import path from 'path';
+import fs from 'fs';
+const __dirname = path.dirname(import.meta.url);
+
 
 // Email and password validation using regular expressions
 const isValidEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -20,10 +24,11 @@ export const register = async (req, res) => {
       location,
       occupation,
     } = req.body;
+    const uploadedPicturePath = req.file ? `/assets/${req.file.filename}` : null;
 
     // Validation checks
     if (!email || !isValidEmail(email)) {
-      return res.status(400).json({ msg: "Invalid or missing email address." });
+      return res.status(400).json({ msg: "your email must be abc@example.com" });
     }
 
     if (!password || !isValidPassword(password)) {
@@ -35,20 +40,21 @@ export const register = async (req, res) => {
 
     const salt = await bcrypt.genSalt(); // Generate a salt for hashing the password
     const passwordHash = await bcrypt.hash(password, salt); // Hash the password
-
     // Create a new user instance
     const newUser = new User({
       firstName,
       lastName,
       email,
       password: passwordHash, // Store hashed password
-      picturePath,
+      picturepath: uploadedPicturePath,
       friends,
       location,
       occupation,
       viewedProfile: Math.floor(Math.random() * 10000),
       impressions: Math.floor(Math.random() * 10000),
     });
+
+
 
     const savedUser = await newUser.save();
 
@@ -64,6 +70,7 @@ export const register = async (req, res) => {
 };
 
 /* Login User */
+
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -85,15 +92,29 @@ export const login = async (req, res) => {
       return res.status(400).json({ msg: "Invalid credentials." });
     }
 
-    // Generate a token
+    // Generate JWT Token
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h", // Token expires in 1 hour
+      expiresIn: "1h",
     });
-    const userWithoutPassword = await User.findById(user._id).select("-password");
 
-    // Respond with the token and user data (excluding password)
-    res.status(200).json({ token, user: userWithoutPassword });
+    res.status(200).json({
+      token,
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        friends: user.friends,
+        location: user.location,
+        occupation: user.occupation,
+        viewedProfile: user.viewedProfile,
+        impressions: user.impressions,
+        picturepath: user.picturepath,
+      },
+    });
   } catch (err) {
+    console.error("[ERROR]-------------> ", err)
     res.status(500).json({ error: err.message });
   }
 };
+
