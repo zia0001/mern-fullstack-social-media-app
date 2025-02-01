@@ -21,7 +21,7 @@ const registerSchema = yup.object().shape({
   lastName: yup.string().required("Last name is required"),
   email: yup
     .string()
-    .email("Please enter a valid email address i.e xyz@gmail.com")
+    .email(("Please enter a valid email address(xyz@gmail.com)"))
     .required("Email is required"),
   password: yup
     .string()
