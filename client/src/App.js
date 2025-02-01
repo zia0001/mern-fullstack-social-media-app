@@ -7,6 +7,7 @@ import { useSelector } from "react-redux";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { createTheme } from "@mui/material/styles";
 import { themeSettings } from "./theme";
+import MyPostWidget from 'scenes/Widgets/MyPostWidget';
 
 
 function App() {
@@ -22,6 +23,9 @@ function App() {
             <Route path="/" element={<LoginPage />} />
             <Route path="/home" element={<HomePage />} />
             <Route path="/profile/userId" element={<ProfilePage />} />
+            <Route path="/create-post" element={<MyPostWidget />} />
+
+
           </Routes>
         </ThemeProvider>
       </BrowserRouter>
