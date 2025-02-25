@@ -41,13 +41,13 @@ export const getUserFriends = async (req, res) => {
     );
 
     const formattedFriends = friends.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => ({
+      ({ _id, firstName, lastName, occupation, location, picturepath }) => ({
         _id,
         firstName,
         lastName,
         occupation,
         location,
-        picturePath,
+        picturepath,
       })
     );
     res.status(200).json(formattedFriends);
@@ -84,13 +84,13 @@ export const addRemoveFriend = async (req, res) => {
     );
 
     const formattedFriends = friends.map(
-      ({ _id, firstName, lastName, occupation, location, picturePath }) => ({
+      ({ _id, firstName, lastName, occupation, location, picturepath }) => ({
         _id,
         firstName,
         lastName,
         occupation,
         location,
-        picturePath,
+        picturepath,
       })
     );
 

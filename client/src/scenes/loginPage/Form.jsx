@@ -17,11 +17,20 @@ import Dropzone from "react-dropzone";
 import FlexBetween from "components/FlexBetween";
 
 const registerSchema = yup.object().shape({
-  firstName: yup.string().required("First name is required"),
-  lastName: yup.string().required("Last name is required"),
+  firstName: yup
+    .string()
+    .matches(/^[a-zA-Z]+$/, "First name must contain only letters")
+    .required("First name is required"),
+  lastName: yup
+    .string()
+    .matches(/^[a-zA-Z]+$/, "Last name must contain only letters")
+    .required("Last name is required"),
   email: yup
     .string()
-    .email(("Please enter a valid email address(xyz@gmail.com)"))
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@gmail\.com$|^[a-zA-Z][a-zA-Z0-9._%+-]*@.*\.(com|org)$/,
+      "Please enter a valid email address (example123@company.com/org)"
+    )
     .required("Email is required"),
   password: yup
     .string()
@@ -30,15 +39,24 @@ const registerSchema = yup.object().shape({
     .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
     .matches(/[0-9]/, "Password must contain at least one number")
     .matches(/[\W_]/, "Password must contain at least one special character"),
-  location: yup.string().required("Location is required"),
-  occupation: yup.string().required("Occupation is required"),
+  location: yup
+    .string()
+    .matches(/^[a-zA-Z]{4,}$/, "Location must contain only letters and be at least 4 characters long")
+    .required("Location is required"),
+  occupation: yup
+    .string()
+    .matches(/^[a-zA-Z]{3,}$/, "Occupation must contain only letters and be at least 3 characters long")
+    .required("Occupation is required"),
   picture: yup.string().required("Profile picture is required"),
 });
 
 const loginSchema = yup.object().shape({
   email: yup
     .string()
-    .email("Please enter a valid email address")
+    .matches(
+      /^[a-zA-Z][a-zA-Z0-9._%+-]*@gmail\.com$|^[a-zA-Z][a-zA-Z0-9._%+-]*@.*\.(com|org)$/,
+      "Please enter a valid email address (example123@company.com/org)"
+    )
     .required("Email is required"),
   password: yup
     .string()
@@ -48,6 +66,11 @@ const loginSchema = yup.object().shape({
     .matches(/[0-9]/, "Password must contain at least one number")
     .matches(/[\W_]/, "Password must contain at least one special character"),
 });
+
+
+
+
+
 
 
 
@@ -202,9 +225,16 @@ const Form = () => {
                   <Dropzone
                     acceptedFiles=".jpg,.jpeg,.png"
                     multiple={false}
-                    onDrop={(acceptedFiles) =>
-                      setFieldValue("picture", acceptedFiles[0])
-                    }
+                    onDrop={(acceptedFiles) => {
+                      // Check if the file type is valid
+                      const file = acceptedFiles[0];
+                      if (file && (file.type === "image/jpeg" || file.type === "image/png")) {
+                        setFieldValue("picture", file); // Set the file if it's a valid image
+                      } else {
+                        // If the file is not in the accepted formats, show an alert or handle it
+                        alert("Please upload a valid image file (.jpg, .jpeg, .png)");
+                      }
+                    }}
                   >
                     {({ getRootProps, getInputProps }) => (
                       <Box
@@ -226,6 +256,7 @@ const Form = () => {
                     )}
                   </Dropzone>
                 </Box>
+
               </>
             )}
 

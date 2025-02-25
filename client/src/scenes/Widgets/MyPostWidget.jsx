@@ -29,48 +29,38 @@ const MyPostWidget = ({ picturepath }) => {
   const dispatch = useDispatch();
   const [isImage, setIsImage] = useState(false);
   const [image, setImage] = useState(null);
-  const [post, setPost] = useState("");
+  const [post, setPost] = useState(""); // ✅ Fixed: Ensures post is always a string
   const { palette } = useTheme();
-  const { _id } = useSelector((state) => state.user);
+  const user = useSelector((state) => state.user);
+  const { _id } = user || {};
   const token = useSelector((state) => state.token);
+
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
   const mediumMain = palette.neutral.mediumMain;
   const medium = palette.neutral.medium;
 
   const handlePost = async () => {
-    // Ensure post is a valid string, even if it's empty
-    if (typeof post !== "string") {
-      setPost(""); // Reset the description if not a valid string
-    }
+    if (!post && !image) return;
 
-    // If there is no description and no image, return early
-    if (!post && !image) {
-      return; // Prevent posting if both description and image are missing
-    }
-
-    // Create FormData object to send the post details
     const formData = new FormData();
-    formData.append("userId", _id); // User ID from Redux state
-    formData.append("description", post || ""); // Use empty string if description is empty
+    formData.append("userId", _id);
+    formData.append("description", post || "");
 
-    // If there is an image, append it to the formData
     if (image) {
       formData.append("picture", image);
-      formData.append("picturePath", image.name); // Include the image name
     }
 
-    // Send the formData as a POST request to the backend
-    const response = await fetch(`http://localhost:3001/posts`, {
+    const response = await fetch(`http://localhost:3001/post`, {
       method: "POST",
       headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
 
     if (response.ok) {
-      const posts = await response.json(); // Get the posts from the server
-      dispatch(setPosts({ posts })); // Update the Redux store with the new posts
-      setImage(null); // Reset the image state
-      setPost(""); // Reset the description input
+      const posts = await response.json();
+      dispatch(setPosts({ posts }));
+      setImage(null);
+      setPost("");
     } else {
       console.error("Failed to create post.");
     }
@@ -83,7 +73,7 @@ const MyPostWidget = ({ picturepath }) => {
         <InputBase
           placeholder="What's on your mind..."
           onChange={(e) => setPost(e.target.value)}
-          value={post}
+          value={post} // ✅ Fixed: Always a string
           sx={{
             width: "100%",
             backgroundColor: palette.neutral.light,
@@ -93,16 +83,12 @@ const MyPostWidget = ({ picturepath }) => {
         />
       </FlexBetween>
 
-      {/* Image upload section */}
       {isImage && (
         <Box border={`1px solid ${medium}`} borderRadius="5px" mt="1rem" p="1rem">
           <Dropzone
             acceptedFiles=".jpg,.jpeg,.png"
             multiple={false}
-            onDrop={(acceptedFiles) => {
-              console.log(acceptedFiles); // Debugging line to log the image file
-              setImage(acceptedFiles[0]);
-            }}
+            onDrop={(acceptedFiles) => setImage(acceptedFiles[0])}
           >
             {({ getRootProps, getInputProps }) => (
               <FlexBetween>
@@ -170,9 +156,8 @@ const MyPostWidget = ({ picturepath }) => {
           </FlexBetween>
         )}
 
-        {/* POST button is enabled if there is a description or an image */}
         <Button
-          disabled={!post && !image} // Disable the button if there's neither a post nor an image
+          disabled={!post && !image}
           onClick={handlePost}
           sx={{
             color: palette.background.alt,

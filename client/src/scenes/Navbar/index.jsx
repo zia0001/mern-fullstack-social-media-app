@@ -39,7 +39,8 @@ const Navbar = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  const fullName = `${user?.firstName} ${user?.lastName}`;
+  // Conditionally set fullName if user exists
+  const fullName = user ? `${user.firstName} ${user.lastName}` : "Guest";
 
   return (
     <FlexBetween padding="1rem 6%" backgroundColor={alt}>
@@ -107,7 +108,9 @@ const Navbar = () => {
               <MenuItem value={fullName}>
                 <Typography>{fullName}</Typography>
               </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+              {user && (
+                <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+              )}
             </Select>
           </FormControl>
         </FlexBetween>
@@ -182,9 +185,11 @@ const Navbar = () => {
                 <MenuItem value={fullName}>
                   <Typography>{fullName}</Typography>
                 </MenuItem>
-                <MenuItem onClick={() => dispatch(setLogout())}>
-                  Log Out
-                </MenuItem>
+                {user && (
+                  <MenuItem onClick={() => dispatch(setLogout())}>
+                    Log Out
+                  </MenuItem>
+                )}
               </Select>
             </FormControl>
           </FlexBetween>
